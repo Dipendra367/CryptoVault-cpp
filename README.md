@@ -1,59 +1,40 @@
-# 🔐 CryptoVault
+# 🔐 CryptoVault C++
 
 ![C++](https://img.shields.io/badge/C++-17-blue?logo=cplusplus)
 ![Crypto++](https://img.shields.io/badge/Crypto++-8.9-green)
 ![Platform](https://img.shields.io/badge/Platform-Linux-orange)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen)
+![Security](https://img.shields.io/badge/Security-AES256%20%2B%20HMAC-red)
 
-A command-line cryptography toolkit built in **C++17** using the [Crypto++](https://cryptopp.com/) library. Implements real-world security algorithms used in banking, blockchain, and secure communications.
-
----
-
-## 📸 Preview
-
-![CryptoVault Menu](assets/screenshots/screenshot1.png)
+A professional-grade, command-line **cryptography toolkit and encrypted notes vault** built from scratch in **C++17** using the [Crypto++](https://cryptopp.com/) library. This project implements the exact same security algorithms used in banking systems, blockchain networks, end-to-end encrypted messengers, and SSL/TLS infrastructure — not wrappers, not tutorials, but real working cryptographic code.
 
 ---
 
-## ✨ Features
+## 🧠 What Makes This Project Special
 
-| Module | Algorithm | Description |
-|---|---|---|
-| Hashing | SHA-256 | One-way 256-bit digest |
-| Hashing | MD5 | Legacy 128-bit digest |
-| Symmetric Encryption | AES-256-CBC | Random IV, industry standard |
-| File Encryption | AES-256-CBC | Encrypt/decrypt any file |
-| Authentication | HMAC-SHA256 | Tamper detection |
-| Asymmetric Crypto | RSA-2048 | Key pair generation |
-| Digital Signature | RSA + SHA-256 | Sign & verify messages |
+Most beginner crypto projects just call one function and print a result. This project:
+
+- Implements **AES-256-CBC with random IV generation** — same plaintext never produces the same ciphertext twice
+- Uses **HMAC-SHA256 for integrity verification** — detects both tampering and wrong passwords before decryption even begins
+- Builds a **fully working encrypted notes vault** — notes are saved to disk in encrypted form and are completely unreadable without the correct password
+- Handles **RSA-2048 key pair generation, signing, and verification** — the foundation of HTTPS and code signing
+- All modules are **independently implemented** across separate source files with clean header interfaces
 
 ---
 
-## 🖥️ Screenshots
+## ✨ Feature Modules
 
-### Main Menu
-![Main Menu](assets/screenshots/screenshot1.png)
-
-### Hashing (SHA-256 & MD5)
-![Hashing](assets/screenshots/screenshot2.png)
-
-### AES-256 Encryption & Decryption
-![AES](assets/screenshots/screenshot3.png)
-
-### File Encryption & Decryption
-![File Encryption](assets/screenshots/screenshot4.png)
-
-### HMAC Authentication
-![HMAC](assets/screenshots/screenshot5.png)
-
-### RSA Key Generation
-![RSA Keys](assets/screenshots/screenshot6.png)
-
-### Digital Signature — Sign
-![Sign](assets/screenshots/screenshot7.png)
-
-### Digital Signature — Verify
-![Verify](assets/screenshots/screenshot8.png)
+| Module | Algorithm | Security Level | Real World Use |
+|---|---|---|---|
+| Hashing | SHA-256 | 256-bit | Bitcoin, Git commits, TLS |
+| Hashing | MD5 | 128-bit (legacy) | Checksums, file integrity |
+| Symmetric Encryption | AES-256-CBC | Military grade | WhatsApp, Signal, banking |
+| File Encryption | AES-256-CBC | Military grade | Encrypted drives, secure transfer |
+| Authentication | HMAC-SHA256 | Cryptographic MAC | API authentication, AWS signatures |
+| Asymmetric Crypto | RSA-2048 | Public key | HTTPS, SSH, email encryption |
+| Digital Signature | RSA + SHA-256 | Non-repudiation | SSL certificates, code signing |
+| Secure Notes Vault | AES-256 + HMAC | End-to-end | Encrypted password managers |
 
 ---
 
@@ -65,7 +46,7 @@ sudo apt update
 sudo apt install libcrypto++-dev libcrypto++-utils
 ```
 
-### Clone & Build
+### Clone & Build CryptoVault
 ```bash
 git clone https://github.com/Dipendra367/CryptoVault-cpp.git
 cd CryptoVault-cpp
@@ -73,63 +54,129 @@ make
 ./cryptovault
 ```
 
----
+### Run SecureNotes Vault
+```bash
+./securenotes
+```
 
+---
 ## 📁 Project Structure
 
-**`src/`** — Source files
-- `main.cpp` — Menu-driven interface
-- `hashing.cpp` — SHA-256 & MD5 hashing
-- `aes.cpp` — AES-256-CBC encrypt/decrypt
-- `fileencrypt.cpp` — File encryption/decryption
-- `hmac.cpp` — HMAC-SHA256 authentication
-- `signature.cpp` — RSA-2048 digital signatures
-
-**`include/`** — Header files
-- `hashing.h`, `aes.h`, `fileencrypt.h`, `hmac.h`, `signature.h`
-
+```
+CryptoVault-cpp/
+│
+├── src/
+│ ├── main.cpp ← CryptoVault menu-driven interface
+│ ├── hashing.cpp ← SHA-256 & MD5 implementation
+│ ├── aes.cpp ← AES-256-CBC encrypt/decrypt with random IV
+│ ├── fileencrypt.cpp ← File-level AES encryption/decryption
+│ ├── hmac.cpp ← HMAC-SHA256 message authentication
+│ ├── signature.cpp ← RSA-2048 key gen, signing & verification
+│ ├── notes.cpp ← Encrypted notes vault (save/read/delete)
+│ └── crypto.cpp ← Core crypto utilities & key derivation
+│
+├── include/
+│ ├── aes.h
+│ ├── crypto.h
+│ ├── hmac.h
+│ ├── notes.h
+│ ├── hashing.h
+│ ├── fileencrypt.h
+│ └── signature.h
+│
+├── assets/
+│ └── screenshots/
+│
+├── Makefile
+└── README.md
+```
 
 ---
 
-## 🔑 How It Works
+## 🔑 Deep Dive: How It Works
 
-- **AES-256** uses a **random IV** generated per encryption — same plaintext produces different ciphertext every time, preventing pattern analysis
-- **HMAC** appends a secret-key-based signature to messages — any tampering changes the MAC and fails verification
-- **RSA Digital Signatures** use your private key to sign and anyone with your public key can verify — this is how SSL certificates and package managers work
-- **File encryption** stores the IV in the first 16 bytes of the encrypted file, allowing correct decryption later
+### AES-256-CBC Encryption
+- A **cryptographically random 16-byte IV** is generated for every encryption operation
+- The IV is prepended to the ciphertext so decryption can always recover it
+- Same plaintext + same key produces **completely different ciphertext** every time — prevents pattern analysis attacks
+- Key is derived from the user's password using a secure derivation process
+
+### HMAC-SHA256 Authentication
+- After encryption, an HMAC is computed over the ciphertext using the password-derived key
+- On decryption, the HMAC is **verified first** before any decryption happens
+- A wrong password produces a different HMAC → `❌ HMAC verification failed!`
+- This prevents padding oracle attacks and detects file tampering
+
+### RSA-2048 Digital Signatures
+- Generates a **2048-bit RSA key pair** (public + private)
+- Private key signs a message digest (SHA-256 hash of the message)
+- Anyone with the public key can verify the signature without knowing the private key
+- This is the exact mechanism behind HTTPS certificates and Git signed commits
+
+### SecureNotes Vault
+- Notes are encrypted with **AES-256** before being written to disk
+- Each note is bound to a password via **HMAC** — no master key file exists
+- Notes are stored as opaque encrypted blobs — file contents reveal nothing
+- Delete is permanent — encrypted file is removed from disk
 
 ---
-## 💻 Usage Example
 
-**Encrypt a message:**
-1. Choose option `[3]` from the menu
-2. Enter your plaintext and a key
-3. Copy the encrypted output (format: `IV:CIPHERTEXT`)
+## 💻 Usage Examples
 
-**Decrypt a message:**
-1. Choose option `[4]` from the menu
-2. Paste the encrypted output and same key
-3. Original message is recovered
+### CryptoVault — Encrypt a Message
+```
+Choice: AES Encrypt
 
+Enter plaintext : Hello World
+Enter key : mysecretkey
+Output : a3f1c2... (IV:CIPHERTEXT in hex)
+```
+### CryptoVault — Verify a Digital Signature
+```
+Choice: Verify Signature
+
+Enter message : Transfer $500
+Enter signature : 3d9f2a...
+Result : ✅ Signature is VALID
+```
+
+### SecureNotes — Create & Read a Note
+```
+Choice: Create note
+
+Title : my secrets
+Content : i am batman
+Password : - - - - - -
+✅ Note 'my secrets' saved securely!
+
+Choice: Read note
+
+Title : my secrets
+Password : wrongpass
+❌ HMAC verification failed! Note may be tampered or wrong password.
+```
 
 ---
 
 ## 🌍 Real World Applications
 
-- WhatsApp & Signal use **AES-256** for message encryption
-- Bitcoin mining uses **SHA-256** for proof of work
-- GitHub uses **SHA-256** to identify every commit
-- Banks use **HMAC** to authenticate API requests
-- SSL certificates use **RSA** for identity verification
+- **WhatsApp & Signal** use AES-256-CBC for end-to-end message encryption
+- **Bitcoin** uses SHA-256 double-hashing for proof-of-work mining
+- **Git** uses SHA-256 to fingerprint every commit and detect corruption
+- **AWS & Stripe APIs** use HMAC-SHA256 to authenticate every API request
+- **HTTPS / SSL certificates** use RSA-2048 for server identity verification
+- **Password managers** like Bitwarden use AES-256 + HMAC — exactly what SecureNotes implements
 
 ---
 
 ## 🚀 Future Plans
 
-- [ ] Secure Notes App — encrypt notes with AES before saving to disk
-- [ ] Password Manager — store credentials encrypted
-- [ ] GUI with Qt
+- [x] ~~Secure Notes App — AES-256 encrypted notes with HMAC verification~~
+- [ ] Password Manager — store credentials encrypted with master password
+- [ ] GUI interface with Qt
 - [ ] File drag-and-drop encryption
+- [ ] Ed25519 signatures (modern alternative to RSA)
+- [ ] Argon2 password hashing for key derivation
 
 ---
 
@@ -137,8 +184,10 @@ make
 
 **Dipendra** — Bachelor of Software Engineering, Pokhara University
 
+[@Dipendra367](https://github.com/Dipendra367)
+
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License** — free to use, modify, and distribute.
