@@ -1,0 +1,17 @@
+# Compiled binary
+cryptovault
+
+# Encrypted/decrypted test files
+*.enc
+*.dec
+
+# VS Code settings
+.vscode/
+
+# Build artifacts
+*.o
+*.a
+
+# System files
+.DS_Store
+Thumbs.db
