@@ -1,0 +1,15 @@
+# Compiled binary
+securenotes
+
+# Object files
+*.o
+
+# Saved notes folder (personal encrypted data)
+notes/
+
+# VS Code settings
+.vscode/
+
+# Build artifacts
+*.out
+*.a
